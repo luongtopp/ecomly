@@ -2,6 +2,8 @@ const express = require('express')
 const mongoose = require('mongoose')
 require('dotenv/config')
 const authRouter = require('./routes/auth.js')
+const usersRouter = require('./routes/users.js')
+const adminRouter = require('./routes/admin.js')
 const productsRouter = require('./routes/products.js')
 const authJwt = require('./middlewares/jwt.js')
 const errorHandler = require('./middlewares/error_handler.js')
@@ -23,11 +25,8 @@ app.use(errorHandler)
 const env = process.env
 const API = env.API_URL
 app.use(`${API}`, authRouter)
-app.get(`${API}/users`, (req, res) => {
-  return res.json({ name: 'luong' })
-})
-
-app.use('/products', productsRouter)
+app.use(`${API}/users`, usersRouter)
+app.use(`${API}/admin`, adminRouter)
 
 mongoose.connect(env.MONGODB_CONNECTION_STRING).then(() => {
   console.log('Connected to Database')

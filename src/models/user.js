@@ -26,4 +26,7 @@ const userSchema = new Schema({
   ]
 })
 userSchema.index({ email: 1, }, { unique: true })
+
+productSchema.set('toObject', { virtuals: true })
+productSchema.set('toJSON', { virtuals: true })
 exports.User = model('User', userSchema)
