@@ -1,4 +1,4 @@
-const { Schema, model } = require('moongose')
+const { Schema, model } = require('mongoose')
 
 const orderSchema = new Schema(
   {
@@ -47,7 +47,7 @@ const orderSchema = new Schema(
   }
 )
 
-productSchema.set('toObject', { virtuals: true })
-productSchema.set('toJSON', { virtuals: true })
+orderSchema.set('toObject', { virtuals: true })
+orderSchema.set('toJSON', { virtuals: true })
 
 exports.Order = model('Order', orderSchema)

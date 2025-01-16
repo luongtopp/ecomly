@@ -1,6 +1,10 @@
 const jwt = require('jsonwebtoken')
 
 async function errorHandler(error, req, res, next) {
+
+  if (req.path === '/api/v1/test') {
+    return next(); // Bỏ qua xử lý lỗi cho route /test
+  }
   if (error.name === 'UnauthorizedError') {
     if (!error.message.includes('jwt expired')) {
       return res
