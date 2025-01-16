@@ -13,7 +13,7 @@ exports.getUsers = async (_, res) => {
 exports.getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select(
-      '-passwordHash -resetPasswordOtp -resetPasswordOtpExpires ')
+      '-passwordHash -resetPasswordOtp -resetPasswordOtpExpires -cart ')
     if (!user) return res.status(404).json({ message: 'User not found' })
     return res.status(200).json({ ...user.toObject() })
   } catch (error) {
@@ -30,7 +30,8 @@ exports.updateUser = async (req, res) => {
       { new: true }
     )
     if (!user) return res.status(404).json({ message: 'Users not found' })
-
+    user.passwordHash = undefined
+    user.cart = undefined
     return res.status(200).json(user)
   } catch (error) {
     res.status(500).json({ type: error.name, message: error.message })

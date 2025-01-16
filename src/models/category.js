@@ -1,4 +1,4 @@
-const { Schema, model } = require('moongose')
+const { Schema, model } = require('mongoose')
 
 const categorySchema = new Schema(
   {
@@ -10,7 +10,7 @@ const categorySchema = new Schema(
   }
 )
 
-productSchema.set('toObject', { virtuals: true })
-productSchema.set('toJSON', { virtuals: true })
+categorySchema.set('toObject', { virtuals: true })
+categorySchema.set('toJSON', { virtuals: true })
 
-exports.Category = model('category', categorySchema)
+exports.Category = model('Category', categorySchema)
