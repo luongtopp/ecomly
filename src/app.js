@@ -5,6 +5,7 @@ const authJwt = require('./middlewares/jwt.js')
 const errorHandler = require('./middlewares/error_handler.js')
 const morgan = require('morgan');
 const bodyParser = require('body-parser')
+const authorizePostRequests = require('./middlewares/authorization.js')
 
 const app = express();
 const env = process.env
@@ -18,6 +19,7 @@ app.use(express.json());
 // Thêm middleware để parse URL-encoded bodies (as sent by HTML forms)
 app.use(express.urlencoded({ extended: true }));
 app.use(authJwt())
+app.use(authorizePostRequests)
 app.use(errorHandler)
 
 
@@ -27,7 +29,6 @@ const usersRouter = require('./routes/users')
 const adminRouter = require('./routes/admin')
 const productsRouter = require('./routes/products')
 const categoriesRouter = require('./routes/categories')
-
 
 app.get(`${API}/test`, (req, res) => { res.status(200).send('Connnected to server success!') })
 app.use(`${API}`, authRouter)
