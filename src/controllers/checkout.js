@@ -3,6 +3,7 @@ const stripe = require('stripe')(process.env.STRIPE_KEY)
 
 const { User } = require('../models/user')
 const { Product } = require('../models/product')
+const orderController = require('../controllers/orders')
 
 
 exports.checkout = async () => {
@@ -84,13 +85,13 @@ exports.checkout = async () => {
   res.status(201).json({ url: session.url })
 }
 
-exports.webhook = async () => {
-  const sig = request.headers['stripe-signature'];
+exports.webhook = async (req, res) => {
+  const sig = req.headers['stripe-signature'];
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
   }
   catch (error) {
     console.error('Webhook Error:', error.message)
@@ -117,9 +118,33 @@ exports.webhook = async () => {
         }
       })
       const address = session.shipping_details?.address ?? session.customer_details.address
-    })
-  }
+      const order = orderController.addOrder({
+        orderItem: orderItems,
+        shippingAddress: address.line1 === 'N/A' ? address.line2 : address.line1,
+        city: address.city,
+        postalCode: address.postal_code,
+        country: address.country,
+        phone: session.customer_details.phone,
+        totalPrice: session.amount_total / 100,
+        user: customer.metadata.userId,
+        paymentId: session.payment_intent
+      })
+      let user = await User.findById(customer.metatdata.userId)
+      if (user && !user.paymentCustomerId) {
+        user = await User.findByIdAndDelete(
+          customer.metadata.userId,
+          { paymentCustomerId: session.customer },
+          { new: true }
+        )
+      }
+      const leanOrder = order.toObject()
+      leanOrder['orderItems'] = orderItems
 
+    })
+  } else {
+    console.log(`Unhandled event type ${event.type}`)
+  }
+  res.send().end()
 }
 
 
