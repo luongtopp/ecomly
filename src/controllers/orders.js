@@ -46,7 +46,18 @@ exports.addOrder = async (orderData) => {
       user.cart.pull(cartProduct.id)
       await user.save({ session })
     }
+    orderData['orderItems'] = orderItemIds
+    let order = new Order(orderData)
+    order.status = 'processed'
+    order.statusHistory.push('processed')
+    order = await order.save({ session })
+    if (!order) {
+      await session.abortTransaction()
+      return console.trace('ORDER CREATION FAILED: The order could not be created')
+    }
 
+    await session.commitTransaction()
+    return order
   } catch (error) {
     await session.abortTransaction()
     return console.trace(error)
