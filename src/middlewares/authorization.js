@@ -1,5 +1,5 @@
-const { default: mongoose } = require("mongoose")
-const { token } = require("morgan")
+const { default: mongoose } = require('mongoose')
+const { token } = require('jsonwebtoken')
 
 async function authorizePostRequests(req, res, next) {
   if (req.method !== 'POST') return next()

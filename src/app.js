@@ -24,17 +24,18 @@ app.use(errorHandler)
 
 
 
-const authRouter = require('./routes/auth')
-const usersRouter = require('./routes/users')
-const adminRouter = require('./routes/admin')
-const productsRouter = require('./routes/products')
-const categoriesRouter = require('./routes/categories')
+const authRouter = require('./routes/auth.js')
+const usersRouter = require('./routes/users.js')
+const adminRouter = require('./routes/admin.js')
+const categoriesRouter = require('./routes/categories.js')
+const checkoutRouter = require('./routes/checkout.js')
 
 app.get(`${API}/test`, (req, res) => { res.status(200).send('Connnected to server success!') })
 app.use(`${API}`, authRouter)
 app.use(`${API}/users`, usersRouter)
 app.use(`${API}/admin`, adminRouter)
 app.use(`${API}/categories`, categoriesRouter)
+app.use(`${API}/checkout`, checkoutRouter)
 app.use('/public', express.static(__dirname + '/public'))
 
 require('./helpers/cron_job.js')
